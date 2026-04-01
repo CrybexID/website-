@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>BayyStore_</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body{
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  min-height:100vh;
+}
+
+.navbar{
+  background: linear-gradient(90deg,#00c6ff,#0072ff) !important;
+}
+
+.card{
+  border:none;
+  border-radius:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
+  transition:.3s;
+}
+.card:hover{
+  transform:translateY(-6px) scale(1.03);
+}
+
+.card-body{
+  background: linear-gradient(180deg,#ffffff,#f1f9ff);
+}
+
+.btn-primary{
+  background: linear-gradient(45deg,#00c6ff,#0072ff);
+  border:none;
+}
+.btn-success{
+  background: linear-gradient(45deg,#00e676,#00c853);
+  border:none;
+}
+.btn-outline-danger{
+  border-color:#ff7043;color:#ff7043;
+}
+.btn-outline-success{
+  border-color:#00c853;color:#00c853;
+}
+.wa-float{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(45deg,#00e676,#1de9b6);
+  color: #fff;
+  padding: 14px 18px;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+  z-index: 9999; /* ini penting supaya selalu di atas */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.
+.offcanvas{
+  background: linear-gradient(180deg,#fdfefe,#e3f2fd);
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg" style="background:#0d6efd">
+ <div class="container">
+  <a class="navbar-brand text-white fw-bold" href="#">🛍 BayyStore_</a>
+  <button class="btn btn-light" onclick="toggleCart()">🛒 <span id="cartCount">0</span></button>
+ </div>
+</nav>
+
+<div class="container my-4">
+ <div class="row mb-3">
+  <div class="col-md-8">
+   <input id="search" class="form-control" placeholder="Cari produk..." oninput="renderProducts()">
+  </div>
+  <div class="col-md-4">
+   <select id="filter" class="form-select" onchange="renderProducts()">
+    <option value="0">Semua Harga</option>
+    <option value="100000">≤ 100k</option>
+    <option value="200000">≤ 200k</option>
+    <option value="300000">≤ 300k</option>
+   </select>
+  </div>
+ </div>
+
+ <div class="row g-3" id="products"></div>
+</div>
+
+<!-- CART -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartBox">
+ <div class="offcanvas-header">
+  <h5 class="offcanvas-title">🛒 Keranjang</h5>
+  <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+ </div>
+ <div class="offcanvas-body d-flex flex-column">
+  <div id="cartItems" class="flex-grow-1"></div>
+  <div>
+   <p>Total: <b id="total">Rp 0</b></p>
+   <input id="nama" class="form-control mb-2" placeholder="Nama">
+   <input id="alamat" class="form-control mb-2" placeholder="Alamat">
+   <select id="metode" class="form-select mb-2">
+    <option>COD</option><option>Transfer</option><option>E-Wallet</option>
+   </select>
+   <button class="btn btn-success w-100" onclick="checkout()">Checkout via WhatsApp</button>
+  </div>
+ </div>
+</div>
+
+<div class="wa-float" onclick="openWA()">💬 Chat WA</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const STORE_NAME="BayyStore";
+const WA_ADMINS=["6287849458134"]; // GANTI NOMOR INI
+
+const products=[
+{id:1,name:"Sneakers",price:250000,img:"https://picsum.photos/400?1",desc:"Sneakers nyaman"},
+{id:2,name:"Kaos",price:80000,img:"https://picsum.photos/400?2",desc:"Kaos cotton"},
+{id:3,name:"Hoodie",price:180000,img:"https://picsum.photos/400?3",desc:"Hoodie hangat"},
+{id:4,name:"Tas",price:220000,img:"https://picsum.photos/400?4",desc:"Tas ransel"},
+{id:5,name:"Topi",price:60000,img:"https://picsum.photos/400?5",desc:"Topi keren"}
+];
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+const productsEl=document.getElementById("products");
+const cartEl=document.getElementById("cartItems");
+const cartCount=document.getElementById("cartCount");
+const totalEl=document.getElementById("total");
+const cartBox=new bootstrap.Offcanvas('#cartBox');
+
+function rupiah(n){return "Rp "+n.toLocaleString("id-ID")}
+
+function renderProducts(){
+ let s=search.value.toLowerCase(),f=+filter.value;
+ productsEl.innerHTML="";
+ products.filter(p=>p.name.toLowerCase().includes(s)&&(!f||p.price<=f))
+ .forEach(p=>{
+  productsEl.innerHTML+=`
+  <div class="col-6 col-md-4 col-lg-3">
+   <div class="card h-100">
+    <img src="${p.img}" class="card-img-top">
+    <div class="card-body text-center">
+     <h6>${p.name}</h6>
+     <p class="fw-bold text-primary">${rupiah(p.price)}</p>
+     <button class="btn btn-sm btn-primary w-100 mb-1" onclick="addToCart(${p.id})">Tambah</button>
+     <button class="btn btn-sm btn-success w-100" onclick="orderSingle(${p.id})">Order WA</button>
+    </div>
+   </div>
+  </div>`;
+ });
+}
+
+function addToCart(id){
+ let p=products.find(x=>x.id===id);
+ let i=cart.find(x=>x.id===id);
+ if(i)i.qty++;else cart.push({...p,qty:1});
+ save();
+}
+
+function renderCart(){
+ cartEl.innerHTML="";let t=0;
+ cart.forEach((i,idx)=>{
+  t+=i.price*i.qty;
+  cartEl.innerHTML+=`
+  <div class="d-flex justify-content-between mb-2">
+   <span>${i.name} (${i.qty})</span>
+   <span>${rupiah(i.price*i.qty)}</span>
+   <button class="btn btn-sm btn-outline-success" onclick="qty(${idx},1)">+</button>
+   <button class="btn btn-sm btn-outline-danger" onclick="qty(${idx},-1)">−</button>
+  </div>`;
+ });
+ cartCount.textContent=cart.reduce((a,b)=>a+b.qty,0);
+ totalEl.textContent=rupiah(t);
+}
+
+function qty(i,n){cart[i].qty+=n;if(cart[i].qty<=0)cart.splice(i,1);save();}
+function save(){localStorage.setItem("cart",JSON.stringify(cart));renderCart();}
+function toggleCart(){cartBox.toggle();}
+
+function generateWAMessage(single=null){
+ let msg=`*🛍 ${STORE_NAME}*\nORDER BARU\n${new Date().toLocaleString("id-ID")}\n\n`;
+ msg+=`Nama: ${nama.value||"-"}\nAlamat: ${alamat.value||"-"}\nMetode: ${metode.value||"-"}\n\n`;
+ msg+="Detail:\n";let total=0;
+ if(single){msg+=`- ${single.name} x1 = ${rupiah(single.price)}\n`;total=single.price;}
+ else{cart.forEach(i=>{msg+=`- ${i.name} x${i.qty} = ${rupiah(i.price*i.qty)}\n`;total+=i.price*i.qty;});}
+ msg+=`\n*TOTAL: ${rupiah(total)}*`;return msg;
+}
+
+function checkout(){
+ if(!nama.value||!alamat.value){alert("Lengkapi data!");return;}
+ if(cart.length===0){alert("Keranjang kosong!");return;}
+ const url=`https://wa.me/${WA_ADMINS[0]}?text=${encodeURIComponent(generateWAMessage())}`;
+ window.open(url,"_blank");
+ cart=[];save();cartBox.hide();
+}
+
+function orderSingle(id){
+ const p=products.find(x=>x.id===id);
+ const url=`https://wa.me/${WA_ADMINS[0]}?text=${encodeURIComponent(generateWAMessage(p))}`;
+ window.open(url,"_blank");
+}
+
+function openWA(){
+ const url=`https://wa.me/${WA_ADMINS[0]}?text=${encodeURIComponent("Halo "+STORE_NAME)}`;
+ window.open(url,"_blank");
+}
+
+renderProducts();renderCart();
+</script>
+</body>
+</html>
