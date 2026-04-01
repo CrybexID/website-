@@ -71,6 +71,13 @@ h1,h2,h3,h4{font-family:'Playfair Display',serif;color:#f5f5f5}
  color:#ddd;
 }
 
+.card p{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
 footer{
  background:#121214;color:#aaa;padding:40px 0
 }
@@ -146,10 +153,30 @@ AOS.init({
 });
 
 const products = [
-  { id: 1, name: "Sneakers Premium", price:250000, img:"sepatu.jpg" },
-  { id: 2, name: "Kaos Silver", price:90000, img:"baju.jpg" },
-  { id: 3, name: "Hoodie Elite", price:190000, img:"Hoodie.jpg" },
-  { id: 4, name: "Tas", price:230000, img:"tas.jpg" }
+  { id: 1, name: "Sneakers Premium", price:250000, img:"sepatu.jpg", desc:"Sepatu stylish nyaman dipakai harian." },
+  { id: 2, name: "Kaos Silver", price:90000, img:"baju.jpg", desc:"Kaos bahan adem dan tidak mudah luntur." },
+  { id: 3, name: "Hoodie Elite", price:190000, img:"Hoodie.jpg", desc:"Hoodie hangat dengan desain modern." },
+  { id: 4, name: "Tas", price:230000, img:"tas.jpg", desc:"Tas kuat dan cocok untuk aktivitas harian." },
+
+  { id: 5, name: "Topi Street", price:50000, img:"topi.jpg", desc:"Topi keren untuk gaya streetwear." },
+  { id: 6, name: "Celana Jeans", price:180000, img:"jeans.jpg", desc:"Jeans premium nyaman dan tahan lama." },
+  { id: 7, name: "Jaket Varsity", price:270000, img:"jaket.jpg", desc:"Jaket varsity dengan tampilan eksklusif." },
+  { id: 8, name: "Kemeja Formal", price:150000, img:"kemeja.jpg", desc:"Kemeja rapi cocok untuk acara formal." },
+
+  { id: 9, name: "Sandal Casual", price:70000, img:"sandal.jpg", desc:"Sandal santai ringan dan nyaman." },
+  { id: 10, name: "Sepatu Sport", price:300000, img:"sport.jpg", desc:"Sepatu olahraga dengan grip kuat." },
+  { id: 11, name: "Jam Tangan", price:120000, img:"jam.jpg", desc:"Jam stylish untuk menunjang penampilan." },
+  { id: 12, name: "Dompet Kulit", price:85000, img:"dompet.jpg", desc:"Dompet elegan berbahan kulit sintetis." },
+
+  { id: 13, name: "Kacamata Hitam", price:95000, img:"kacamata.jpg", desc:"Kacamata anti UV dengan desain keren." },
+  { id: 14, name: "Ikat Pinggang", price:60000, img:"belt.jpg", desc:"Belt kuat dan fleksibel digunakan." },
+  { id: 15, name: "Tas Ransel", price:210000, img:"ransel.jpg", desc:"Ransel besar cocok untuk sekolah/travel." },
+  { id: 16, name: "Kaos Oversize", price:110000, img:"oversize.jpg", desc:"Kaos oversize trend masa kini." },
+
+  { id: 17, name: "Hoodie Zipper", price:200000, img:"hoodie2.jpg", desc:"Hoodie zipper praktis dan stylish." },
+  { id: 18, name: "Sepatu Formal", price:320000, img:"formal.jpg", desc:"Sepatu formal elegan untuk kerja." },
+  { id: 19, name: "Sendal Jepit Premium", price:45000, img:"jepit.jpg", desc:"Sandal jepit nyaman kualitas premium." },
+  { id: 20, name: "Tas Selempang", price:140000, img:"selempang.jpg", desc:"Tas kecil praktis untuk sehari-hari." }
 ];
 
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
@@ -170,7 +197,8 @@ function renderProducts(){
     <img src="${p.img}" class="card-img-top img-cinematic" data-aos="zoom-in">
     <div class="card-body text-center">
      <h6>${p.name}</h6>
-     <p class="fw-bold">${rupiah(p.price)}</p>
+      <p style="font-size:13px;opacity:.8">${p.desc}</p>
+      <p class="fw-bold">${rupiah(p.price)}</p>
      <button class="btn btn-sm btn-primary w-100 mb-1" onclick="addToCart(${p.id})">Tambah</button>
      <button class="btn btn-sm btn-success w-100" onclick="orderSingle(${p.id})">Order WA</button>
     </div>
@@ -237,4 +265,4 @@ function openWA(){
 renderProducts();renderCart();
 </script>
 </body>
-</html>
+  </html>
