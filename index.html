@@ -78,6 +78,11 @@ h1,h2,h3,h4{font-family:'Playfair Display',serif;color:#f5f5f5}
   overflow:hidden;
 }
 
+.btn.active{
+  background:#fff;
+  color:#000;
+}
+
 footer{
  background:#121214;color:#aaa;padding:40px 0
 }
@@ -115,6 +120,19 @@ const WA_ADMIN="6287849458134"; // GANTI NOMOR WA KAMU
 
 <div class="container my-5">
  <h2 class="text-center mb-4" data-aos="fade-up">Our Products</h2>
+
+ <!-- 🔍 SEARCH + FILTER DI SINI -->
+ <div class="text-center mb-3">
+   <input id="search" class="form-control mb-2" placeholder="Cari produk..." onkeyup="renderProducts()">
+
+   <button class="btn btn-sm btn-light" onclick="filterCategory('All')">All</button>
+   <button class="btn btn-sm btn-light" onclick="filterCategory('Pakaian')">Pakaian</button>
+   <button class="btn btn-sm btn-light" onclick="filterCategory('Sepatu')">Sepatu</button>
+   <button class="btn btn-sm btn-light" onclick="filterCategory('Tas')">Tas</button>
+   <button class="btn btn-sm btn-light" onclick="filterCategory('Aksesoris')">Aksesoris</button>
+ </div>
+
+ <!-- PRODUK -->
  <div class="row g-3" id="products"></div>
 </div>
 
@@ -153,30 +171,30 @@ AOS.init({
 });
 
 const products = [
-  { id: 1, name: "Sneakers Premium", price:250000, img:"sepatu.jpg", desc:"Sepatu stylish nyaman dipakai harian." },
-  { id: 2, name: "Kaos Silver", price:90000, img:"baju.jpg", desc:"Kaos bahan adem dan tidak mudah luntur." },
-  { id: 3, name: "Hoodie Elite", price:190000, img:"Hoodie.jpg", desc:"Hoodie hangat dengan desain modern." },
-  { id: 4, name: "Tas", price:230000, img:"tas.jpg", desc:"Tas kuat dan cocok untuk aktivitas harian." },
+  { id:1, name:"Sneakers Premium", price:250000, oldPrice:300000, stock:5, img:"sepatu.jpg", desc:"Sepatu stylish nyaman dipakai harian.", category:"Sepatu", badge:"SALE" },
+  { id:2, name:"Kaos Silver", price:90000, stock:10, img:"baju.jpg", desc:"Kaos bahan adem dan tidak mudah luntur.", category:"Pakaian", badge:"BEST" },
+  { id:3, name:"Hoodie Elite", price:190000, stock:4, img:"Hoodie.jpg", desc:"Hoodie hangat dengan desain modern.", category:"Pakaian" },
+  { id:4, name:"Tas", price:230000, stock:6, img:"tas.jpg", desc:"Tas kuat dan cocok untuk aktivitas harian.", category:"Tas" },
 
-  { id: 5, name: "Topi Street", price:50000, img:"topi.jpg", desc:"Topi keren untuk gaya streetwear." },
-  { id: 6, name: "Celana Jeans", price:180000, img:"jeans.jpg", desc:"Jeans premium nyaman dan tahan lama." },
-  { id: 7, name: "Jaket Varsity", price:270000, img:"jaket.jpg", desc:"Jaket varsity dengan tampilan eksklusif." },
-  { id: 8, name: "Kemeja Formal", price:150000, img:"kemeja.jpg", desc:"Kemeja rapi cocok untuk acara formal." },
+  { id:5, name:"Topi Street", price:50000, stock:8, img:"topi.jpg", desc:"Topi keren untuk gaya streetwear.", category:"Aksesoris" },
+  { id:6, name:"Celana Jeans", price:180000, stock:3, img:"jeans.jpg", desc:"Jeans premium nyaman dan tahan lama.", category:"Pakaian", badge:"BEST" },
+  { id:7, name:"Jaket Varsity", price:270000, stock:2, img:"jaket.jpg", desc:"Jaket varsity dengan tampilan eksklusif.", category:"Pakaian" },
+  { id:8, name:"Kemeja Formal", price:150000, stock:7, img:"kemeja.jpg", desc:"Kemeja rapi cocok untuk acara formal.", category:"Pakaian" },
 
-  { id: 9, name: "Sandal Casual", price:70000, img:"sandal.jpg", desc:"Sandal santai ringan dan nyaman." },
-  { id: 10, name: "Sepatu Sport", price:300000, img:"sport.jpg", desc:"Sepatu olahraga dengan grip kuat." },
-  { id: 11, name: "Jam Tangan", price:120000, img:"jam.jpg", desc:"Jam stylish untuk menunjang penampilan." },
-  { id: 12, name: "Dompet Kulit", price:85000, img:"dompet.jpg", desc:"Dompet elegan berbahan kulit sintetis." },
+  { id:9, name:"Sandal Casual", price:70000, stock:9, img:"sandal.jpg", desc:"Sandal santai ringan dan nyaman.", category:"Sepatu" },
+  { id:10, name:"Sepatu Sport", price:300000, oldPrice:350000, stock:5, img:"sport.jpg", desc:"Sepatu olahraga dengan grip kuat.", category:"Sepatu", badge:"SALE" },
+  { id:11, name:"Jam Tangan", price:120000, stock:6, img:"jam.jpg", desc:"Jam stylish untuk menunjang penampilan.", category:"Aksesoris" },
+  { id:12, name:"Dompet Kulit", price:85000, stock:10, img:"dompet.jpg", desc:"Dompet elegan berbahan kulit sintetis.", category:"Aksesoris" },
 
-  { id: 13, name: "Kacamata Hitam", price:95000, img:"kacamata.jpg", desc:"Kacamata anti UV dengan desain keren." },
-  { id: 14, name: "Ikat Pinggang", price:60000, img:"belt.jpg", desc:"Belt kuat dan fleksibel digunakan." },
-  { id: 15, name: "Tas Ransel", price:210000, img:"ransel.jpg", desc:"Ransel besar cocok untuk sekolah/travel." },
-  { id: 16, name: "Kaos Oversize", price:110000, img:"oversize.jpg", desc:"Kaos oversize trend masa kini." },
+  { id:13, name:"Kacamata Hitam", price:95000, stock:7, img:"kacamata.jpg", desc:"Kacamata anti UV dengan desain keren.", category:"Aksesoris" },
+  { id:14, name:"Ikat Pinggang", price:60000, stock:12, img:"belt.jpg", desc:"Belt kuat dan fleksibel digunakan.", category:"Aksesoris" },
+  { id:15, name:"Tas Ransel", price:210000, stock:5, img:"ransel.jpg", desc:"Ransel besar cocok untuk sekolah/travel.", category:"Tas" },
+  { id:16, name:"Kaos Oversize", price:110000, stock:8, img:"oversize.jpg", desc:"Kaos oversize trend masa kini.", category:"Pakaian" },
 
-  { id: 17, name: "Hoodie Zipper", price:200000, img:"hoodie2.jpg", desc:"Hoodie zipper praktis dan stylish." },
-  { id: 18, name: "Sepatu Formal", price:320000, img:"formal.jpg", desc:"Sepatu formal elegan untuk kerja." },
-  { id: 19, name: "Sendal Jepit Premium", price:45000, img:"jepit.jpg", desc:"Sandal jepit nyaman kualitas premium." },
-  { id: 20, name: "Tas Selempang", price:140000, img:"selempang.jpg", desc:"Tas kecil praktis untuk sehari-hari." }
+  { id:17, name:"Hoodie Zipper", price:200000, stock:4, img:"hoodie2.jpg", desc:"Hoodie zipper praktis dan stylish.", category:"Pakaian" },
+  { id:18, name:"Sepatu Formal", price:320000, stock:3, img:"formal.jpg", desc:"Sepatu formal elegan untuk kerja.", category:"Sepatu" },
+  { id:19, name:"Sendal Jepit Premium", price:45000, stock:15, img:"jepit.jpg", desc:"Sandal jepit nyaman kualitas premium.", category:"Sepatu" },
+  { id:20, name:"Tas Selempang", price:140000, stock:6, img:"selempang.jpg", desc:"Tas kecil praktis untuk sehari-hari.", category:"Tas" }
 ];
 
 let cart=JSON.parse(localStorage.getItem("cart"))||[];
@@ -190,18 +208,36 @@ function rupiah(n){return "Rp "+n.toLocaleString("id-ID")}
 
 function renderProducts(){
  productsEl.innerHTML="";
- products.forEach(p=>{
+
+ const keyword = document.getElementById("search")?.value?.toLowerCase() || "";
+
+ products
+ .filter(p => (currentCategory==="All" || p.category===currentCategory))
+ .filter(p => p.name.toLowerCase().includes(keyword))
+ .forEach(p=>{
+
   productsEl.innerHTML+=`
-  <div class="col-6 col-md-3" data-aos="fade-up">
-   <div class="card h-100">
-    <img src="${p.img}" class="card-img-top img-cinematic" data-aos="zoom-in">
+  <div class="col-6 col-md-3">
+   <div class="card h-100 position-relative">
+
+    ${p.badge ? `<span style="position:absolute;top:10px;left:10px;background:#fff;color:#000;padding:3px 8px;border-radius:6px;font-size:10px">${p.badge}</span>` : ""}
+
+    <img src="${p.img}" class="card-img-top">
+
     <div class="card-body text-center">
      <h6>${p.name}</h6>
-      <p style="font-size:13px;opacity:.8">${p.desc}</p>
-      <p class="fw-bold">${rupiah(p.price)}</p>
-     <button class="btn btn-sm btn-primary w-100 mb-1" onclick="addToCart(${p.id})">Tambah</button>
+     <small style="opacity:.6">${p.category}</small>
+     <p style="font-size:13px;opacity:.8">${p.desc}</p>
+
+     ${p.oldPrice ? `<span style="text-decoration:line-through;font-size:12px">${rupiah(p.oldPrice)}</span>` : ""}
+     <p class="fw-bold">${rupiah(p.price)}</p>
+
+     <small>Stok: ${p.stock}</small>
+
+     <button class="btn btn-sm btn-primary w-100 mb-1" ${p.stock<=0?"disabled":""} onclick="addToCart(${p.id})">Tambah</button>
      <button class="btn btn-sm btn-success w-100" onclick="orderSingle(${p.id})">Order WA</button>
     </div>
+
    </div>
   </div>`;
  });
@@ -262,7 +298,18 @@ function openWA(){
  window.open(url,"_blank");
 }
 
+let currentCategory = "All";
+
+function filterCategory(cat){
+  currentCategory = cat;
+
+  document.querySelectorAll(".btn").forEach(b=>b.classList.remove("active"));
+  event.target.classList.add("active");
+
+  renderProducts();
+}
+
 renderProducts();renderCart();
 </script>
 </body>
-  </html>
+     </html>
